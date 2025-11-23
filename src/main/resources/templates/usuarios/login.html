@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ReStart.AI - Login</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body>
+
+<header class="top-navbar">
+    <div class="top-brand">
+        <img th:src="@{/images/logo.png}" alt="ReStart.AI" class="brand-logo">
+        <span class="brand-name">ReStart.AI</span>
+    </div>
+    <div class="lang-dropdown">
+        <button class="lang-btn" type="button">🌐</button>
+        <div class="lang-menu">
+            <a th:href="@{/login(lang='pt_BR')}">PT</a>
+            <a th:href="@{/login(lang='en')}">EN</a>
+        </div>
+    </div>
+</header>
+
+<main class="login-main">
+    <div class="login-card">
+        <h1 class="login-title" th:text="#{login.title}">Entrar</h1>
+
+        <div th:if="${#fields.hasGlobalErrors()}"
+             th:each="err : ${#fields.globalErrors()}"
+             th:text="${err}"></div>
+
+        <form th:action="@{/login}" th:object="${login}" method="post" class="login-form">
+            <div class="form-group">
+                <label for="email" class="form-label" th:text="#{login.label.email}">E-mail</label>
+                <input id="email"
+                       type="email"
+                       th:field="*{email}"
+                       class="form-control input-control"
+                       th:placeholder="#{login.placeholder.email}"
+                       required>
+                <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="senha" class="form-label" th:text="#{login.label.password}">Senha</label>
+                <input id="senha"
+                       type="password"
+                       th:field="*{senha}"
+                       class="form-control input-control"
+                       th:placeholder="#{login.placeholder.password}"
+                       required>
+                <div th:if="${#fields.hasErrors('senha')}" th:errors="*{senha}"></div>
+            </div>
+
+            <button type="submit"
+                    class="btn btn-primary btn-login"
+                    th:text="#{login.button.submit}">
+                Entrar
+            </button>
+        </form>
+
+        <div class="login-links">
+            <span th:text="#{login.question.noAccount}">Ainda não tem conta?</span>
+            <a th:href="@{/usuarios/cadastro}"
+               class="link-cadastro"
+               th:text="#{login.link.signup}">
+                Cadastre-se
+            </a>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

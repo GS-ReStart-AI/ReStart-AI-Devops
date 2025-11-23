@@ -1,0 +1,113 @@
+package br.com.restartai.restart_ai.dto.error;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ApiErrorResponse {
+
+    private Instant timestamp;
+    private int status;
+    private String error;
+    private String message;
+    private String path;
+    private List<FieldErrorResponse> fieldErrors = new ArrayList<>();
+
+    public ApiErrorResponse() {
+        this.timestamp = Instant.now();
+    }
+
+    public ApiErrorResponse(Instant timestamp,
+                            int status,
+                            String error,
+                            String message,
+                            String path) {
+        this.timestamp = timestamp;
+        this.status = status;
+        this.error = error;
+        this.message = message;
+        this.path = path;
+    }
+
+    public Instant getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Instant timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public List<FieldErrorResponse> getFieldErrors() {
+        return fieldErrors;
+    }
+
+    public void setFieldErrors(List<FieldErrorResponse> fieldErrors) {
+        this.fieldErrors = fieldErrors;
+    }
+
+    public void addFieldError(String field, String message) {
+        this.fieldErrors.add(new FieldErrorResponse(field, message));
+    }
+
+    public static class FieldErrorResponse {
+
+        private String field;
+        private String message;
+
+        public FieldErrorResponse() {
+        }
+
+        public FieldErrorResponse(String field, String message) {
+            this.field = field;
+            this.message = message;
+        }
+
+        public String getField() {
+            return field;
+        }
+
+        public void setField(String field) {
+            this.field = field;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
+}

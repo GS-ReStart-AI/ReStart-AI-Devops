@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'ReStart.AI - ' + #{perfil.title}">ReStart.AI - Meu Perfil</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/css/perfil.css}">
+</head>
+<body>
+
+<header class="top-navbar">
+    <div class="top-brand">
+        <img th:src="@{/images/logo.png}" alt="ReStart.AI" class="brand-logo">
+        <span class="brand-name">ReStart.AI</span>
+    </div>
+
+    <div class="top-right">
+        <a th:href="@{/curriculo(usuarioId=${usuarioId},lang=${#locale.toString()})}"
+           class="btn-perfil"
+           th:text="#{perfil.nav.curriculo}">Currículo</a>
+        <button id="logoutBtn" class="logout-btn btn btn-outline-light" type="button" title="Sair">
+            <i class="bi bi-box-arrow-right"></i>
+        </button>
+        <div class="lang-dropdown">
+            <button class="lang-btn" type="button">🌐</button>
+            <div class="lang-menu">
+                <a th:href="@{/perfil(usuarioId=${usuarioId},lang='pt_BR')}">PT</a>
+                <a th:href="@{/perfil(usuarioId=${usuarioId},lang='en')}">EN</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="perfil-main">
+    <section class="card-wrapper">
+        <div class="perfil-card">
+            <h1 class="card-title" th:text="#{perfil.title}">Meu Perfil</h1>
+
+            <form id="perfilForm" class="perfil-form">
+                <input type="hidden" id="usuarioId" th:value="${usuarioId}">
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="nomeCompleto" class="form-label"
+                               th:text="#{perfil.form.label.nome}">Nome completo</label>
+                        <input id="nomeCompleto" type="text" class="input-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cpf" class="form-label"
+                               th:text="#{perfil.form.label.cpf}">CPF</label>
+                        <input id="cpf" type="text" class="input-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dataNascimento" class="form-label"
+                               th:text="#{perfil.form.label.nascimento}">Data de nascimento</label>
+                        <input id="dataNascimento" type="date" class="input-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label"
+                               th:text="#{perfil.form.label.email}">E-mail</label>
+                        <input id="email" type="email" class="input-control" disabled>
+                    </div>
+                </div>
+
+                <div id="perfilStatus" class="status-text"></div>
+
+                <div class="botoes-linha">
+                    <button type="button" id="salvarBtn" class="btn-principal"
+                            th:text="#{perfil.button.save}">
+                        Salvar alterações
+                    </button>
+
+                    <button type="button" id="excluirBtn" class="btn-perigo"
+                            th:text="#{perfil.button.delete}">
+                        Excluir conta
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <span>ReStart.AI © 2025</span>
+</footer>
+
+<script th:inline="javascript">
+    const PERFIL_STATUS_LOADING        = /*[[#{perfil.status.loading}]]*/ 'Carregando dados...';
+    const PERFIL_STATUS_LOAD_ERROR     = /*[[#{perfil.status.loadError}]]*/ 'Não foi possível carregar os dados do perfil.';
+    const PERFIL_STATUS_LOAD_UNEXPECTED= /*[[#{perfil.status.loadUnexpected}]]*/ 'Erro inesperado ao carregar perfil.';
+
+    const PERFIL_STATUS_SAVING         = /*[[#{perfil.status.saving}]]*/ 'Salvando...';
+    const PERFIL_STATUS_SAVE_ERROR     = /*[[#{perfil.status.saveError}]]*/ 'Não foi possível salvar as alterações.';
+    const PERFIL_STATUS_SAVE_UNEXPECTED= /*[[#{perfil.status.saveUnexpected}]]*/ 'Erro inesperado ao salvar perfil.';
+    const PERFIL_STATUS_SAVE_OK        = /*[[#{perfil.status.saveOk}]]*/ 'Dados atualizados com sucesso.';
+
+    const PERFIL_STATUS_DELETING       = /*[[#{perfil.status.deleting}]]*/ 'Excluindo conta...';
+    const PERFIL_STATUS_DELETE_ERROR   = /*[[#{perfil.status.deleteError}]]*/ 'Não foi possível excluir sua conta.';
+    const PERFIL_STATUS_DELETE_UNEXPECTED = /*[[#{perfil.status.deleteUnexpected}]]*/ 'Erro inesperado ao excluir conta.';
+
+    const PERFIL_CONFIRM_DELETE        = /*[[#{perfil.confirm.delete}]]*/ 'Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.';
+
+    const usuarioIdInput = document.getElementById('usuarioId');
+    const perfilStatus = document.getElementById('perfilStatus');
+
+    const nomeInput = document.getElementById('nomeCompleto');
+    const cpfInput = document.getElementById('cpf');
+    const dataNascInput = document.getElementById('dataNascimento');
+    const emailInput = document.getElementById('email');
+
+    const salvarBtn = document.getElementById('salvarBtn');
+    const excluirBtn = document.getElementById('excluirBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    const usuarioId = usuarioIdInput.value;
+
+    salvarBtn.addEventListener('click', salvarPerfil);
+    excluirBtn.addEventListener('click', excluirConta);
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', fazerLogout);
+    }
+
+    carregarPerfil();
+
+    async function carregarPerfil() {
+        perfilStatus.textContent = PERFIL_STATUS_LOADING;
+        perfilStatus.className = 'status-text';
+
+        try {
+            const response = await fetch('/api/usuarios/' + usuarioId);
+
+            if (!response.ok) {
+                perfilStatus.textContent = PERFIL_STATUS_LOAD_ERROR;
+                perfilStatus.classList.add('status-erro');
+                return;
+            }
+
+            const data = await response.json();
+
+            nomeInput.value = data.nomeCompleto || '';
+            cpfInput.value = data.cpf || '';
+            dataNascInput.value = data.dataNascimento || '';
+            emailInput.value = data.email || '';
+
+            perfilStatus.textContent = '';
+        } catch (err) {
+            perfilStatus.textContent = PERFIL_STATUS_LOAD_UNEXPECTED;
+            perfilStatus.classList.add('status-erro');
+        }
+    }
+
+    async function salvarPerfil() {
+        perfilStatus.textContent = PERFIL_STATUS_SAVING;
+        perfilStatus.className = 'status-text';
+
+        const payload = {
+            nomeCompleto: nomeInput.value,
+            cpf: cpfInput.value,
+            dataNascimento: dataNascInput.value
+        };
+
+        try {
+            const response = await fetch('/api/usuarios/' + usuarioId + '/perfil', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                perfilStatus.textContent = PERFIL_STATUS_SAVE_ERROR;
+                perfilStatus.classList.add('status-erro');
+                return;
+            }
+
+            perfilStatus.textContent = PERFIL_STATUS_SAVE_OK;
+            perfilStatus.classList.add('status-ok');
+        } catch (err) {
+            perfilStatus.textContent = PERFIL_STATUS_SAVE_UNEXPECTED;
+            perfilStatus.classList.add('status-erro');
+        }
+    }
+
+    async function excluirConta() {
+        const confirmar = confirm(PERFIL_CONFIRM_DELETE);
+
+        if (!confirmar) {
+            return;
+        }
+
+        perfilStatus.textContent = PERFIL_STATUS_DELETING;
+        perfilStatus.className = 'status-text';
+
+        try {
+            const response = await fetch('/api/usuarios/' + usuarioId, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                perfilStatus.textContent = PERFIL_STATUS_DELETE_ERROR;
+                perfilStatus.classList.add('status-erro');
+                return;
+            }
+
+            window.location.href = '/login';
+        } catch (err) {
+            perfilStatus.textContent = PERFIL_STATUS_DELETE_UNEXPECTED;
+            perfilStatus.classList.add('status-erro');
+        }
+    }
+
+    async function fazerLogout() {
+        try {
+            await fetch('/logout', {
+                method: 'POST'
+            });
+        } catch (err) {
+        } finally {
+            window.location.href = '/';
+        }
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

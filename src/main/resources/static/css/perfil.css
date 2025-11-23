@@ -1,0 +1,300 @@
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background-color: #ffffff;
+}
+
+.top-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 32px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    border-radius: 16px;
+    margin: 12px 12px 0;
+}
+
+.top-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand-logo {
+    height: 28px;
+}
+
+.brand-name {
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.top-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Dropdown de idioma */
+.lang-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.lang-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    outline: none;
+}
+
+.lang-btn:hover {
+    background: #f3f4f6;
+}
+
+.lang-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    padding: 4px 0;
+    min-width: 80px;
+    display: none;
+    z-index: 1000;
+}
+
+.lang-dropdown:hover .lang-menu {
+    display: block;
+}
+
+.lang-menu a {
+    display: block;
+    padding: 4px 10px;
+    font-size: 13px;
+    color: #111827;
+    text-decoration: none;
+}
+
+.lang-menu a:hover {
+    background: #f3f4f6;
+}
+
+/* Layout principal */
+.perfil-main {
+    min-height: calc(100vh - 140px);
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    align-items: center;
+    padding: 24px 16px 40px;
+}
+
+.card-wrapper {
+    width: 100%;
+    max-width: 880px;
+}
+
+.perfil-card {
+    background: linear-gradient(180deg, #e4c8ff 0%, #c7d9ff 50%, #b3ddff 100%);
+    border-radius: 32px;
+    padding: 40px 48px 48px;
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.18);
+}
+
+.card-title {
+    text-align: center;
+    font-weight: 700;
+    font-size: 28px;
+    margin-bottom: 32px;
+}
+
+.perfil-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-label {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.input-control {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 999px;
+    border: none;
+    outline: none;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.4);
+    font-size: 14px;
+}
+
+.input-control:disabled {
+    background-color: #e5e7eb;
+    color: #6b7280;
+}
+
+/* Mensagens de status */
+.status-text {
+    font-size: 13px;
+    min-height: 16px;
+    text-align: center;
+    margin-top: 8px;
+}
+
+.status-ok {
+    color: #15803d;
+}
+
+.status-erro {
+    color: #b91c1c;
+}
+
+/* Botões */
+.botoes-linha {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.btn-principal {
+    padding: 10px 32px;
+    border-radius: 999px;
+    border: none;
+    background: #000000;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.btn-principal:hover {
+    background: #111827;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Botão de deletar conta */
+.btn-perigo {
+    padding: 10px 32px;
+    border-radius: 999px;
+    border: 2px solid #000000;
+    background: #ffffff;
+    color: #000000;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.btn-perigo:hover {
+    background: #ff4b4b;
+    color: #ffffff;
+    border-color: #ff4b4b;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(255, 75, 75, 0.45);
+}
+
+/* Rodapé */
+.footer {
+    background-color: #cfe9ff;
+    margin: 16px 12px 12px;
+    padding: 10px 0;
+    text-align: center;
+    font-size: 13px;
+    border-radius: 16px;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* Responsivo */
+@media (max-width: 640px) {
+    .top-navbar {
+        margin: 8px 8px 0;
+        padding: 10px 16px;
+    }
+
+    .perfil-card {
+        padding: 28px 16px 32px;
+        border-radius: 24px;
+    }
+
+    .card-title {
+        font-size: 22px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+/* Botão 'Currículo' no topo (ao lado do seletor de idioma) */
+.btn-perfil {
+    padding: 8px 24px;
+    border-radius: 999px;
+    border: none;
+    background: #000000;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-perfil:hover {
+    background: #111827;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+}
+
+.logout-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 0;
+}
+
+.logout-btn:hover {
+    background: #e5e7eb;
+}
+
+.logout-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #e5e7eb;
+}

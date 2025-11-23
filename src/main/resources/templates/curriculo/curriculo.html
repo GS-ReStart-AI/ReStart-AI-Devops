@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <title>ReStart.AI - Currículo</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/curriculo.css}">
+</head>
+<body>
+
+<header class="top-navbar">
+    <div class="top-brand">
+        <img th:src="@{/images/logo.png}" alt="ReStart.AI" class="brand-logo">
+        <span class="brand-name">ReStart.AI</span>
+    </div>
+
+    <div class="top-right">
+        <a th:href="@{/perfil(usuarioId=${usuarioId})}"
+           class="btn-perfil"
+           th:text="#{curriculo.button.profile}">Meu Perfil</a>
+
+        <div class="lang-dropdown">
+            <button class="lang-btn" type="button">🌐</button>
+            <div class="lang-menu">
+                <a th:href="@{/curriculo(usuarioId=${usuarioId},lang='pt_BR')}">PT</a>
+                <a th:href="@{/curriculo(usuarioId=${usuarioId},lang='en')}">EN</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="curriculo-main">
+
+    <section class="card-wrapper">
+        <div class="curriculo-card">
+            <h1 class="card-title" th:text="#{curriculo.title}">Seu currículo</h1>
+
+            <form id="uploadForm" class="upload-form" enctype="multipart/form-data">
+                <input type="hidden" id="usuarioId" name="usuarioId" th:value="${usuarioId}">
+
+                <div class="form-group">
+                    <label for="arquivo" class="form-label"
+                           th:text="#{curriculo.label.upload}">Envie seu currículo em PDF</label>
+                    <input id="arquivo"
+                           name="arquivo"
+                           type="file"
+                           accept="application/pdf"
+                           class="file-input"
+                           required>
+                </div>
+
+                <div id="uploadStatus" class="status-text"></div>
+
+                <button type="submit" class="btn-principal"
+                        th:text="#{curriculo.button.upload}">Enviar</button>
+            </form>
+        </div>
+    </section>
+
+    <section id="analiseSection" class="card-wrapper hidden">
+        <div class="analise-card">
+            <h2 class="card-title" th:text="#{curriculo.analysis.title}">Análise da IA</h2>
+
+            <p class="analise-subtitle"
+               th:text="#{curriculo.analysis.subtitle}">
+                Após enviar o PDF, clique no botão abaixo para gerar insights sobre o seu currículo.
+            </p>
+
+            <button id="analyzeBtn"
+                    class="btn-secundario"
+                    disabled
+                    th:text="#{curriculo.button.analyze}">
+                Analisar currículo com IA
+            </button>
+
+            <div class="analise-grid">
+
+                <div class="analise-bloco">
+                    <h3 th:text="#{curriculo.section1.title}">1. Resumo do perfil profissional</h3>
+                    <p id="resumoPerfil"></p>
+                </div>
+
+                <div class="analise-bloco">
+                    <h3 th:text="#{curriculo.section2.title}">2. Principais competências e habilidades</h3>
+                    <p id="competenciasHabilidades"></p>
+                </div>
+
+                <div class="analise-bloco">
+                    <h3 th:text="#{curriculo.section3.title}">3. Áreas de atuação atuais possíveis</h3>
+                    <p id="areasAtuais"></p>
+                </div>
+
+                <div class="analise-bloco">
+                    <h3 th:text="#{curriculo.section4.title}">4. Áreas alternativas para migração de carreira</h3>
+                    <p id="areasAlternativas"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <span>ReStart.AI © 2025</span>
+</footer>
+
+<script th:inline="javascript">
+    const MSG_SELECT_PDF          = /*[[#{curriculo.upload.selectFirst}]]*/ 'Selecione um PDF primeiro.';
+    const MSG_SENDING             = /*[[#{curriculo.upload.sending}]]*/ 'Enviando currículo...';
+    const MSG_UPLOAD_ERROR        = /*[[#{curriculo.upload.error}]]*/ 'Erro ao enviar currículo.';
+    const MSG_UPLOAD_OK           = /*[[#{curriculo.upload.success}]]*/ 'Currículo enviado com sucesso.';
+    const MSG_UPLOAD_UNEXPECTED   = /*[[#{curriculo.upload.errorUnexpected}]]*/ 'Erro inesperado ao enviar currículo.';
+
+    const MSG_ANALYZE_RUNNING     = /*[[#{curriculo.button.analyze.loading}]]*/ 'Gerando análise...';
+    const MSG_ANALYZE_ERROR       = /*[[#{curriculo.error.analyze}]]*/ 'Erro ao analisar currículo.';
+    const MSG_ANALYZE_UNEXPECTED  = /*[[#{curriculo.error.unexpected}]]*/ 'Erro inesperado durante a análise.';
+    const MSG_ANALYZE_BTN         = /*[[#{curriculo.button.analyze}]]*/ 'Analisar currículo com IA';
+
+    const MSG_NO_INFO             = /*[[#{curriculo.section.empty}]]*/ 'Sem informações.';
+    const LABEL_JUSTIFICATIVA     = /*[[#{curriculo.label.justificativa}]]*/ 'Justificativa:';
+
+    const IA_LANG                 = /*[[${iaLang}]]*/ 'en';
+
+    const uploadForm = document.getElementById('uploadForm');
+    const uploadStatus = document.getElementById('uploadStatus');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const analiseSection = document.getElementById('analiseSection');
+    const usuarioIdInput = document.getElementById('usuarioId');
+
+    const resumoPerfilEl = document.getElementById('resumoPerfil');
+    const competenciasEl = document.getElementById('competenciasHabilidades');
+    const areasAtuaisEl = document.getElementById('areasAtuais');
+    const areasAlternativasEl = document.getElementById('areasAlternativas');
+
+    let curriculoId = null;
+
+    uploadForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const arquivoInput = document.getElementById('arquivo');
+        if (!arquivoInput.files.length) {
+            uploadStatus.textContent = MSG_SELECT_PDF;
+            uploadStatus.className = 'status-text error';
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('arquivo', arquivoInput.files[0]);
+        formData.append('usuarioId', usuarioIdInput.value);
+
+        uploadStatus.textContent = MSG_SENDING;
+        uploadStatus.className = 'status-text';
+
+        try {
+            const response = await fetch('/api/curriculos/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                uploadStatus.textContent = MSG_UPLOAD_ERROR;
+                uploadStatus.className = 'status-text error';
+                return;
+            }
+
+            const data = await response.json();
+            curriculoId = data.id;
+
+            uploadStatus.textContent = MSG_UPLOAD_OK;
+            uploadStatus.className = 'status-text success';
+
+            analiseSection.classList.remove('hidden');
+            analyzeBtn.disabled = false;
+        } catch (error) {
+            uploadStatus.textContent = MSG_UPLOAD_UNEXPECTED;
+            uploadStatus.className = 'status-text error';
+        }
+    });
+
+    analyzeBtn.addEventListener('click', async function () {
+        if (!curriculoId) {
+            resumoPerfilEl.textContent = MSG_ANALYZE_ERROR;
+            return;
+        }
+
+        analyzeBtn.disabled = true;
+        analyzeBtn.textContent = MSG_ANALYZE_RUNNING;
+
+        resumoPerfilEl.textContent = '';
+        competenciasEl.textContent = '';
+        areasAtuaisEl.textContent = '';
+        areasAlternativasEl.textContent = '';
+
+        try {
+            const response = await fetch('/api/curriculos/' + curriculoId + '/analisar?lang=' + encodeURIComponent(IA_LANG), {
+                method: 'POST'
+            });
+
+            if (!response.ok) {
+                resumoPerfilEl.textContent = MSG_ANALYZE_ERROR;
+                analyzeBtn.disabled = false;
+                analyzeBtn.textContent = MSG_ANALYZE_BTN;
+                return;
+            }
+
+            const text = await response.text();
+
+            const sections = parseAnaliseIa(text);
+
+            resumoPerfilEl.innerHTML = formatSectionText(sections.resumo);
+            competenciasEl.innerHTML = formatSectionText(sections.competencias);
+            areasAtuaisEl.innerHTML = formatSectionText(sections.areasAtuais);
+            areasAlternativasEl.innerHTML = formatSectionText(sections.areasAlternativas);
+        } catch (err) {
+            resumoPerfilEl.textContent = MSG_ANALYZE_UNEXPECTED;
+            analyzeBtn.disabled = false;
+            analyzeBtn.textContent = MSG_ANALYZE_BTN;
+        }
+    });
+
+    function formatSectionText(text) {
+        if (!text || !text.trim()) {
+            return '<span class="sem-info">' + MSG_NO_INFO + '</span>';
+        }
+
+        const parts = text.split(/\n+/).map(p => p.trim()).filter(p => p.length > 0);
+
+        const paragraphs = parts.map(p => {
+            if (/^[-•]/.test(p)) {
+                return '<li>' + p.replace(/^[-•]\s*/, '') + '</li>';
+            }
+            if (/^Justificativa[:\-]/i.test(p)) {
+                return '<p><strong>' + LABEL_JUSTIFICATIVA + '</strong> ' + p.replace(/^Justificativa[:\-]\s*/i, '') + '</p>';
+            }
+            return '<p>' + p + '</p>';
+        });
+
+        const listItems = paragraphs.filter(p => p.startsWith('<li>'));
+        const otherParagraphs = paragraphs.filter(p => !p.startsWith('<li>'));
+
+        let html = '';
+
+        otherParagraphs.forEach(p => {
+            html += p;
+        });
+
+        if (listItems.length > 0) {
+            html += '<ul>' + listItems.join('') + '</ul>';
+        }
+
+        return html;
+    }
+
+    function parseAnaliseIa(texto) {
+        const resultado = {
+            resumo: '',
+            competencias: '',
+            areasAtuais: '',
+            areasAlternativas: ''
+        };
+
+        if (!texto || !texto.trim()) {
+            return resultado;
+        }
+
+        const partes = texto.split(/\n{2,}/).map(p => p.trim()).filter(p => p.length > 0);
+
+        const textoUnico = partes.join('\n\n');
+
+        const linhas = textoUnico.split('\n');
+
+        let secaoAtual = null;
+        let buffer = [];
+
+        function salvarBuffer() {
+            if (!secaoAtual || buffer.length === 0) return;
+            const conteudo = buffer.join('\n').trim();
+            if (!conteudo) return;
+
+            if (secaoAtual === 'resumo') {
+                resultado.resumo = conteudo;
+            } else if (secaoAtual === 'competencias') {
+                resultado.competencias = conteudo;
+            } else if (secaoAtual === 'areasAtuais') {
+                resultado.areasAtuais = conteudo;
+            } else if (secaoAtual === 'areasAlternativas') {
+                resultado.areasAlternativas = conteudo;
+            }
+            buffer = [];
+        }
+
+        linhas.forEach(linha => {
+            const textoLinha = linha.trim();
+
+            if (/^1\./.test(textoLinha)) {
+                salvarBuffer();
+                secaoAtual = 'resumo';
+                buffer.push(textoLinha.replace(/^1\.\s*/i, '').trim());
+                return;
+            }
+
+            if (/^2\./.test(textoLinha)) {
+                salvarBuffer();
+                secaoAtual = 'competencias';
+                buffer.push(textoLinha.replace(/^2\.\s*/i, '').trim());
+                return;
+            }
+
+            if (/^3\./.test(textoLinha)) {
+                salvarBuffer();
+                secaoAtual = 'areasAtuais';
+                buffer.push(textoLinha.replace(/^3\.\s*/i, '').trim());
+                return;
+            }
+
+            if (/^4\./.test(textoLinha)) {
+                salvarBuffer();
+                secaoAtual = 'areasAlternativas';
+                buffer.push(textoLinha.replace(/^4\.\s*/i, '').trim());
+                return;
+            }
+
+            if (!secaoAtual) {
+                secaoAtual = 'resumo';
+            }
+
+            buffer.push(textoLinha);
+        });
+
+        salvarBuffer();
+
+        if (!resultado.resumo &&
+            !resultado.competencias &&
+            !resultado.areasAtuais &&
+            !resultado.areasAlternativas) {
+            resultado.resumo = texto.trim();
+        }
+
+        return resultado;
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

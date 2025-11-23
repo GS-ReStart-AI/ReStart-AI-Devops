@@ -1,0 +1,255 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    background-color: #ffffff;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    min-width: 900px;
+}
+
+.home-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+.hero-card {
+    width: calc(100% - 48px);
+    margin: 0 auto;
+    padding: 0;
+    border-radius: 12px;
+    background: none;
+    box-shadow: none;
+    box-sizing: border-box;
+}
+
+.hero-inner {
+    background: linear-gradient(135deg, #d4bbfd, #73c1ee);
+    border-radius: 12px;
+    padding: 20px 40px 50px;
+    min-height: 87vh;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    width: 100%;
+}
+
+.top-bar {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.top-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.top-logo-mark {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.logo-anim:hover {
+    transform: scale(1.12);
+    transition: 0.25s ease;
+}
+
+.top-logo-text {
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-top {
+    border-radius: 12px;
+    padding: 12px 30px;
+    font-size: 17px;
+    text-decoration: none;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+}
+
+.btn-top-secondary {
+    background: #f2f2f2;
+    color: #111827;
+}
+
+.btn-top-primary {
+    background: #111827;
+    color: #ffffff;
+}
+
+.btn-anim {
+    transition: 0.25s ease;
+}
+
+.btn-anim:hover {
+    transform: scale(1.07);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.22);
+}
+
+.hero-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
+}
+
+.hero-text-block {
+    max-width: 900px;
+    text-align: center;
+}
+
+.hero-title {
+    font-weight: 800;
+    font-size: 42px;
+    margin-bottom: 20px;
+}
+
+.hero-paragraph {
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 14px;
+}
+
+.hero-illustration-wrapper {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+.hero-illustration-image {
+    width: 450px;
+    max-width: 100%;
+}
+
+.footer-bar {
+    width: calc(100% - 48px);
+    align-self: center;
+    background: #c3e4ff;
+    border-radius: 12px;
+    padding: 14px 28px;
+    font-size: 15px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.footer-center {
+    text-align: center;
+    font-weight: 500;
+}
+
+.btn-footer {
+    background: #111827;
+    color: #ffffff;
+    padding: 10px 26px;
+    border-radius: 12px;
+    font-size: 15px;
+    text-decoration: none;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.14);
+    transition: 0.25s;
+}
+
+.btn-footer:hover {
+    transform: scale(1.07);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.22);
+}
+
+.btn-lang {
+    background: #ffffff;
+    color: #111827;
+    padding: 8px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    text-decoration: none;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    transition: 0.25s;
+}
+
+.btn-lang:hover {
+    transform: scale(1.07);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.22);
+}
+
+.lang-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.lang-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    outline: none;
+}
+
+.lang-btn:hover {
+    background: #f3f4f6;
+}
+
+.lang-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    padding: 4px 0;
+    min-width: 80px;
+    display: none;
+    z-index: 1000;
+}
+
+.lang-dropdown.open .lang-menu,
+.lang-dropdown:hover .lang-menu {
+    display: block;
+}
+
+.lang-menu a {
+    display: block;
+    padding: 4px 10px;
+    font-size: 13px;
+    color: #111827;
+    text-decoration: none;
+}
+
+.lang-menu a:hover {
+    background: #f3f4f6;
+}
