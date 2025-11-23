@@ -19,7 +19,7 @@ oportunidades.
 
 ## 🔗 Links Importantes
 
-- 🎥 Video Demonstrativo: **[Assista ao video](https://)**  
+- 🎥 Video Demonstrativo: **[Assista ao video](https://youtu.be/qVBEEM5Be-Y)**  
 - 🌐 Deploy (aplicação online): **[Acesse a ReStart.AI](https://restart-rm558191.azurewebsites.net/)**  
 - 📚 Documentação da API (Swagger/OpenAPI): **[Ver documentação](https://restart-rm558191.azurewebsites.net/swagger-ui/index.html)**
 
@@ -139,3 +139,4 @@ scripts principais:
     echo "Criação e configuração concluídas com sucesso!"
 
 ------------------------------------------------------------------------
+
